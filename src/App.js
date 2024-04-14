@@ -41,11 +41,14 @@ function App() {
       <div className="status-container">
         <div className="status-item">
           { statusLeft }
-          <button>toggle</button>
+          {/* <button>toggle</button> */}
         </div>
         <div className="status-item">
           { statusRight }
-          <button>toggle</button>
+          {/* <button>toggle</button> */}
+        </div>
+        <div className="authorize">
+          {/* <button>Authenticate</button> */}
         </div>
       </div>
       <div className="version">{version}</div>
