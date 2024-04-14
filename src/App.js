@@ -7,7 +7,7 @@ function App() {
   const UNICODE_DOWN = '↓';
   const UNICODE_LOADING = '⟳';
   const UNICODE_ERROR = '⊗';
-  
+
   const statusEndpoint = process.env.NODE_ENV === 'production' ?
     'https://desired-mollusk-naturally.ngrok-free.app/api/v1/status' : 
     'http://localhost:4000/api/v1/status'
@@ -20,8 +20,12 @@ function App() {
       try {
         const response = await fetch(statusEndpoint);
         const status = await response.json();
-        setStatusLeft(status.left === 'up' ? UNICODE_UP : UNICODE_DOWN);
-        setStatusRight(status.right === 'up' ? UNICODE_UP : UNICODE_DOWN);
+        if (status.left === 'up') setStatusLeft(UNICODE_UP);
+        if (status.left === 'down') setStatusLeft(UNICODE_DOWN);
+        if (status.left === 'error') setStatusLeft(UNICODE_ERROR);
+        if (status.right === 'up') setStatusRight(UNICODE_UP);
+        if (status.right === 'down') setStatusRight(UNICODE_DOWN);
+        if (status.right === 'error') setStatusRight(UNICODE_ERROR);
       } catch (error) {
         console.error(error);
         setStatusLeft(UNICODE_ERROR);
