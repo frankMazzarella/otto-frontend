@@ -1,12 +1,13 @@
 .container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   min-height: 100vh;
   background-color: #282c34;
 }
 
-.status {
+.status-container {
   display: flex;
   justify-content: space-around;
   padding-top: 100px;
@@ -14,5 +15,28 @@
   max-width: 800px;
   font-size: 7em;
   font-weight: bold;
-  color: white;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.version {
+  color: #5e5e5e;
+}
+
+button {
+  background-color: white;
+  border: none;
+  color: #282c34;
+  padding: 10px 30px;
+  cursor: pointer;
+  font-size: 0.2em;
+  margin-top: 25px;
+}
+
+button:active {
+  background-color: #ccc;
 }

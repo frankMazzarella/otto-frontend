@@ -8,6 +8,7 @@ function App() {
   const UNICODE_LOADING = '⟳';
   const UNICODE_ERROR = '⊗';
 
+  const version = `v${process.env.REACT_APP_VERSION}`;
   const statusEndpoint = process.env.NODE_ENV === 'production' ?
     'https://desired-mollusk-naturally.ngrok-free.app/api/v1/status' : 
     'http://localhost:4000/api/v1/status'
@@ -37,10 +38,17 @@ function App() {
 
   return (
     <div className="container">
-      <div className="status">
-        <span>{ statusLeft }</span>
-        <span>{ statusRight }</span>
+      <div className="status-container">
+        <div className="status-item">
+          { statusLeft }
+          <button>toggle</button>
+        </div>
+        <div className="status-item">
+          { statusRight }
+          <button>toggle</button>
+        </div>
       </div>
+      <div className="version">{version}</div>
     </div>
   );
 }
