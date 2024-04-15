@@ -17,6 +17,9 @@ function App() {
   const toggleEndpoint = process.env.NODE_ENV === 'production' ?
     `${DOMAIN_PROD}/api/v1/toggle` : 
     `${DOMAIN_LOCAL}/api/v1/toggle`;
+  const authenticateEndpoint = process.env.NODE_END === 'production' ?
+    `${DOMAIN_PROD}/api/v1/authenticate` :
+    `${DOMAIN_LOCAL}/api/v1/authenticate`;
 
   const [statusLeft, setStatusLeft] = useState(UNICODE_LOADING);
   const [statusRight, setStatusRight] = useState(UNICODE_LOADING);
@@ -25,19 +28,38 @@ function App() {
   async function handleToggleButton(side) {
     setToggleButtonsDisabled(true);
     try {
-      const response = await fetch(toggleEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ side })
-      });
+      const options = getFetchOptions({ side });
+      const response = await fetch(toggleEndpoint, options);
       const data = await response.json();
       console.log(data);
       setToggleButtonsDisabled(false);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  async function handleAuthenticateButton() {
+    const password = prompt('Password');
+    if (password) {
+      try {
+        const options = getFetchOptions({ password });
+        const response = await fetch(authenticateEndpoint, options);
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  function getFetchOptions(postBody) {
+    return {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(postBody),
+    };
   }
 
   useEffect(() => {
@@ -70,7 +92,7 @@ function App() {
             disabled={toggleButtonsDisabled}
             onClick={() => handleToggleButton('left')}
           >
-            toggle
+            Toggle
           </button> */}
         </div>
         <div className="status-item">
@@ -79,11 +101,11 @@ function App() {
             disabled={toggleButtonsDisabled}
             onClick={() => handleToggleButton('right')}
           >
-            toggle
+            Toggle
           </button> */}
         </div>
         <div className="authorize">
-          {/* <button>Authenticate</button> */}
+          {/* <button onClick={handleAuthenticateButton}>Authenticate</button> */}
         </div>
       </div>
       <div className="version">{version}</div>
