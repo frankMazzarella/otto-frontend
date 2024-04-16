@@ -9,7 +9,9 @@ function App() {
   const UNICODE_ERROR = "⊗";
   const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
   const DOMAIN_LOCAL = "http://localhost:4000";
+  const AUTH_TOKEN = "auth_token";
 
+  const storedToken = localStorage.getItem(AUTH_TOKEN);
   const version = `v${process.env.REACT_APP_VERSION}`;
   const statusEndpoint =
     process.env.NODE_ENV === "production"
@@ -27,14 +29,17 @@ function App() {
   const [statusLeft, setStatusLeft] = useState(UNICODE_LOADING);
   const [statusRight, setStatusRight] = useState(UNICODE_LOADING);
   const [toggleButtonsDisabled, setToggleButtonsDisabled] = useState(true);
+  const [authToken, setAuthToken] = useState(storedToken);
 
   async function handleToggleButton(side) {
     setToggleButtonsDisabled(true);
     try {
-      const options = getFetchOptions({ side });
+      const options = getFetchOptions({ token: authToken, side });
       const response = await fetch(toggleEndpoint, options);
-      const data = await response.json();
-      console.log(data);
+      if (response.status !== 200) {
+        setAuthToken(null);
+        localStorage.setItem(AUTH_TOKEN, null);
+      }
       setToggleButtonsDisabled(false);
     } catch (error) {
       console.error(error);
@@ -48,7 +53,10 @@ function App() {
         const options = getFetchOptions({ password });
         const response = await fetch(authenticateEndpoint, options);
         const data = await response.json();
-        console.log(data);
+        if (data.token) {
+          setAuthToken(data.token);
+          localStorage.setItem(AUTH_TOKEN, data.token);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -91,24 +99,30 @@ function App() {
       <div className="status-container">
         <div className="status-item">
           {statusLeft}
-          {/* <button
-            disabled={toggleButtonsDisabled}
-            onClick={() => handleToggleButton('left')}
-          >
-            Toggle
-          </button> */}
+          {authToken ? (
+            <button
+              disabled={toggleButtonsDisabled}
+              onClick={() => handleToggleButton("left")}
+            >
+              Toggle
+            </button>
+          ) : null}
         </div>
         <div className="status-item">
           {statusRight}
-          {/* <button
-            disabled={toggleButtonsDisabled}
-            onClick={() => handleToggleButton('right')}
-          >
-            Toggle
-          </button> */}
+          {authToken ? (
+            <button
+              disabled={toggleButtonsDisabled}
+              onClick={() => handleToggleButton("right")}
+            >
+              Toggle
+            </button>
+          ) : null}
         </div>
         <div className="authorize">
-          {/* <button onClick={handleAuthenticateButton}>Authenticate</button> */}
+          {authToken ? null : (
+            <button onClick={handleAuthenticateButton}>Authenticate</button>
+          )}
         </div>
       </div>
       <div className="version">{version}</div>
