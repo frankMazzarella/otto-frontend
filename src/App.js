@@ -55,9 +55,9 @@ function App() {
   }
 
   async function handleAuthenticateButton() {
-    setAuthenticateButtonDisabled(true);
     const password = prompt("Password");
     if (password) {
+      setAuthenticateButtonDisabled(true);
       try {
         const options = getFetchOptions({ password });
         const response = await fetch(authenticateEndpoint, options);
