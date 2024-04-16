@@ -8,6 +8,8 @@ const UNICODE_LOADING = "⟳";
 const UNICODE_ERROR = "⊗";
 const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
+const LEFT_BUTTON = "left";
+const RIGHT_BUTTON = "right";
 const AUTH_TOKEN_KEY = "auth_token";
 
 const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
@@ -29,11 +31,13 @@ if (process.env.NODE_ENV === "production") {
 function App() {
   const [statusLeft, setStatusLeft] = useState(UNICODE_LOADING);
   const [statusRight, setStatusRight] = useState(UNICODE_LOADING);
-  const [toggleButtonsDisabled, setToggleButtonsDisabled] = useState(true);
   const [authToken, setAuthToken] = useState(storedToken);
+  const [leftButtonDisabled, setLeftButtonDisabled] = useState(true);
+  const [rightButtonDisabled, setRightButtonDisabled] = useState(true);
 
   async function handleToggleButton(side) {
-    setToggleButtonsDisabled(true);
+    if (side === LEFT_BUTTON) setLeftButtonDisabled(true);
+    if (side === RIGHT_BUTTON) setRightButtonDisabled(true);
     try {
       const options = getFetchOptions({ token: authToken, side });
       const response = await fetch(toggleEndpoint, options);
@@ -41,7 +45,8 @@ function App() {
         setAuthToken(null);
         localStorage.setItem(AUTH_TOKEN_KEY, null);
       }
-      setToggleButtonsDisabled(false);
+      if (side === LEFT_BUTTON) setLeftButtonDisabled(false);
+      if (side === RIGHT_BUTTON) setRightButtonDisabled(false);
     } catch (error) {
       console.error(error);
     }
@@ -85,7 +90,8 @@ function App() {
         if (status.right === "up") setStatusRight(UNICODE_UP);
         if (status.right === "down") setStatusRight(UNICODE_DOWN);
         if (status.right === "error") setStatusRight(UNICODE_ERROR);
-        setToggleButtonsDisabled(false);
+        setLeftButtonDisabled(false);
+        setRightButtonDisabled(false);
       } catch (error) {
         console.error(error);
         setStatusLeft(UNICODE_ERROR);
@@ -102,8 +108,8 @@ function App() {
           {statusLeft}
           {authToken ? (
             <button
-              disabled={toggleButtonsDisabled}
-              onClick={() => handleToggleButton("left")}
+              disabled={leftButtonDisabled}
+              onClick={() => handleToggleButton(LEFT_BUTTON)}
             >
               Toggle
             </button>
@@ -113,8 +119,8 @@ function App() {
           {statusRight}
           {authToken ? (
             <button
-              disabled={toggleButtonsDisabled}
-              onClick={() => handleToggleButton("right")}
+              disabled={rightButtonDisabled}
+              onClick={() => handleToggleButton(RIGHT_BUTTON)}
             >
               Toggle
             </button>
