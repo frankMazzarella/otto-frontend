@@ -34,6 +34,8 @@ function App() {
   const [authToken, setAuthToken] = useState(storedToken);
   const [leftButtonDisabled, setLeftButtonDisabled] = useState(true);
   const [rightButtonDisabled, setRightButtonDisabled] = useState(true);
+  const [authenticateButtonDisabled, setAuthenticateButtonDisabled] =
+    useState(false);
 
   async function handleToggleButton(side) {
     if (side === LEFT_BUTTON) setLeftButtonDisabled(true);
@@ -53,6 +55,7 @@ function App() {
   }
 
   async function handleAuthenticateButton() {
+    setAuthenticateButtonDisabled(true);
     const password = prompt("Password");
     if (password) {
       try {
@@ -66,6 +69,7 @@ function App() {
       } catch (error) {
         console.error(error);
       }
+      setAuthenticateButtonDisabled(false);
     }
   }
 
@@ -128,7 +132,12 @@ function App() {
         </div>
         <div className="authorize">
           {authToken ? null : (
-            <button onClick={handleAuthenticateButton}>Authenticate</button>
+            <button
+              disabled={authenticateButtonDisabled}
+              onClick={handleAuthenticateButton}
+            >
+              Authenticate
+            </button>
           )}
         </div>
       </div>
