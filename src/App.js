@@ -2,30 +2,31 @@ import { useEffect, useState } from "react";
 
 import "./App.css";
 
+const UNICODE_UP = "↑";
+const UNICODE_DOWN = "↓";
+const UNICODE_LOADING = "⟳";
+const UNICODE_ERROR = "⊗";
+const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
+const DOMAIN_LOCAL = "http://localhost:4000";
+const AUTH_TOKEN_KEY = "auth_token";
+
+const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
+const version = `v${process.env.REACT_APP_VERSION}`;
+let statusEndpoint;
+let toggleEndpoint;
+let authenticateEndpoint;
+
+if (process.env.NODE_ENV === "production") {
+  statusEndpoint = `${DOMAIN_PROD}/api/v1/status`;
+  toggleEndpoint = `${DOMAIN_PROD}/api/v1/toggle`;
+  authenticateEndpoint = `${DOMAIN_PROD}/api/v1/authenticate`;
+} else {
+  statusEndpoint = `${DOMAIN_LOCAL}/api/v1/status`;
+  toggleEndpoint = `${DOMAIN_LOCAL}/api/v1/toggle`;
+  authenticateEndpoint = `${DOMAIN_LOCAL}/api/v1/authenticate`;
+}
+
 function App() {
-  const UNICODE_UP = "↑";
-  const UNICODE_DOWN = "↓";
-  const UNICODE_LOADING = "⟳";
-  const UNICODE_ERROR = "⊗";
-  const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
-  const DOMAIN_LOCAL = "http://localhost:4000";
-  const AUTH_TOKEN = "auth_token";
-
-  const storedToken = localStorage.getItem(AUTH_TOKEN);
-  const version = `v${process.env.REACT_APP_VERSION}`;
-  const statusEndpoint =
-    process.env.NODE_ENV === "production"
-      ? `${DOMAIN_PROD}/api/v1/status`
-      : `${DOMAIN_LOCAL}/api/v1/status`;
-  const toggleEndpoint =
-    process.env.NODE_ENV === "production"
-      ? `${DOMAIN_PROD}/api/v1/toggle`
-      : `${DOMAIN_LOCAL}/api/v1/toggle`;
-  const authenticateEndpoint =
-    process.env.NODE_END === "production"
-      ? `${DOMAIN_PROD}/api/v1/authenticate`
-      : `${DOMAIN_LOCAL}/api/v1/authenticate`;
-
   const [statusLeft, setStatusLeft] = useState(UNICODE_LOADING);
   const [statusRight, setStatusRight] = useState(UNICODE_LOADING);
   const [toggleButtonsDisabled, setToggleButtonsDisabled] = useState(true);
@@ -38,7 +39,7 @@ function App() {
       const response = await fetch(toggleEndpoint, options);
       if (response.status !== 200) {
         setAuthToken(null);
-        localStorage.setItem(AUTH_TOKEN, null);
+        localStorage.setItem(AUTH_TOKEN_KEY, null);
       }
       setToggleButtonsDisabled(false);
     } catch (error) {
@@ -55,7 +56,7 @@ function App() {
         const data = await response.json();
         if (data.token) {
           setAuthToken(data.token);
-          localStorage.setItem(AUTH_TOKEN, data.token);
+          localStorage.setItem(AUTH_TOKEN_KEY, data.token);
         }
       } catch (error) {
         console.error(error);
@@ -92,7 +93,7 @@ function App() {
       }
     }
     queryStatus();
-  }, [statusEndpoint]);
+  }, []);
 
   return (
     <div className="container">
