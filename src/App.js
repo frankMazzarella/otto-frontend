@@ -37,6 +37,43 @@ function App() {
   const [authenticateButtonDisabled, setAuthenticateButtonDisabled] =
     useState(false);
 
+  useEffect(() => {
+    async function queryStatus() {
+      try {
+        await updateStatus(statusEndpoint);
+        setLeftButtonDisabled(false);
+        setRightButtonDisabled(false);
+        startLongPoll();
+      } catch (error) {
+        console.error(error);
+        setStatusLeft(UNICODE_ERROR);
+        setStatusRight(UNICODE_ERROR);
+      }
+    }
+    queryStatus();
+  });
+
+  async function startLongPoll() {
+    try {
+      await updateStatus(`${statusEndpoint}?longPoll=true`);
+      startLongPoll();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function updateStatus(url) {
+    const response = await fetch(url);
+    const status = await response.json();
+    if (status.left === "up") setStatusLeft(UNICODE_UP);
+    if (status.left === "down") setStatusLeft(UNICODE_DOWN);
+    if (status.left === "error") setStatusLeft(UNICODE_ERROR);
+    if (status.right === "up") setStatusRight(UNICODE_UP);
+    if (status.right === "down") setStatusRight(UNICODE_DOWN);
+    if (status.right === "error") setStatusRight(UNICODE_ERROR);
+    console.log(status);
+  }
+
   async function handleToggleButton(side) {
     if (side === LEFT_BUTTON) setLeftButtonDisabled(true);
     if (side === RIGHT_BUTTON) setRightButtonDisabled(true);
@@ -82,28 +119,6 @@ function App() {
       body: JSON.stringify(postBody),
     };
   }
-
-  useEffect(() => {
-    async function queryStatus() {
-      try {
-        const response = await fetch(statusEndpoint);
-        const status = await response.json();
-        if (status.left === "up") setStatusLeft(UNICODE_UP);
-        if (status.left === "down") setStatusLeft(UNICODE_DOWN);
-        if (status.left === "error") setStatusLeft(UNICODE_ERROR);
-        if (status.right === "up") setStatusRight(UNICODE_UP);
-        if (status.right === "down") setStatusRight(UNICODE_DOWN);
-        if (status.right === "error") setStatusRight(UNICODE_ERROR);
-        setLeftButtonDisabled(false);
-        setRightButtonDisabled(false);
-      } catch (error) {
-        console.error(error);
-        setStatusLeft(UNICODE_ERROR);
-        setStatusRight(UNICODE_ERROR);
-      }
-    }
-    queryStatus();
-  }, []);
 
   return (
     <div className="container">
