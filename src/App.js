@@ -43,7 +43,6 @@ function App() {
         await updateStatus(statusEndpoint);
         setLeftButtonDisabled(false);
         setRightButtonDisabled(false);
-        startLongPoll();
       } catch (error) {
         console.error(error);
         setStatusLeft(UNICODE_ERROR);
@@ -51,16 +50,23 @@ function App() {
       }
     }
     queryStatus();
-  });
+  }, []);
 
-  async function startLongPoll() {
-    try {
-      await updateStatus(`${statusEndpoint}?longPoll=true`);
-      startLongPoll();
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    async function startLongPoll() {
+      try {
+        await updateStatus(`${statusEndpoint}?longPoll=true`);
+        startLongPoll();
+      } catch (error) {
+        console.error(error);
+        setLeftButtonDisabled(true);
+        setRightButtonDisabled(true);
+        setStatusLeft(UNICODE_ERROR);
+        setStatusRight(UNICODE_ERROR);
+      }
     }
-  }
+    startLongPoll();
+  }, []);
 
   async function updateStatus(url) {
     const response = await fetch(url);
