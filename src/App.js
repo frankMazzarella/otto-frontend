@@ -11,6 +11,9 @@ const DOMAIN_LOCAL = "http://localhost:4000";
 const LEFT_BUTTON = "left";
 const RIGHT_BUTTON = "right";
 const AUTH_TOKEN_KEY = "auth_token";
+const STATUS_UP = "OPEN";
+const STATUS_DOWN = "CLOSED";
+const STATUS_ERROR = "ERROR";
 
 const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 const version = `v${process.env.REACT_APP_VERSION}`;
@@ -43,7 +46,6 @@ function App() {
         await updateStatus(statusEndpoint);
         setLeftButtonDisabled(false);
         setRightButtonDisabled(false);
-        startLongPoll();
       } catch (error) {
         console.error(error);
         setStatusLeft(UNICODE_ERROR);
@@ -51,26 +53,33 @@ function App() {
       }
     }
     queryStatus();
-  });
+  }, []);
 
-  async function startLongPoll() {
-    try {
-      await updateStatus(`${statusEndpoint}?longPoll=true`);
-      startLongPoll();
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    async function startLongPoll() {
+      try {
+        await updateStatus(`${statusEndpoint}?longPoll=true`);
+        startLongPoll();
+      } catch (error) {
+        console.error(error);
+        setLeftButtonDisabled(true);
+        setRightButtonDisabled(true);
+        setStatusLeft(UNICODE_ERROR);
+        setStatusRight(UNICODE_ERROR);
+      }
     }
-  }
+    startLongPoll();
+  }, []);
 
   async function updateStatus(url) {
     const response = await fetch(url);
     const status = await response.json();
-    if (status.left === "up") setStatusLeft(UNICODE_UP);
-    if (status.left === "down") setStatusLeft(UNICODE_DOWN);
-    if (status.left === "error") setStatusLeft(UNICODE_ERROR);
-    if (status.right === "up") setStatusRight(UNICODE_UP);
-    if (status.right === "down") setStatusRight(UNICODE_DOWN);
-    if (status.right === "error") setStatusRight(UNICODE_ERROR);
+    if (status.left === STATUS_UP) setStatusLeft(UNICODE_UP);
+    if (status.left === STATUS_DOWN) setStatusLeft(UNICODE_DOWN);
+    if (status.left === STATUS_ERROR) setStatusLeft(UNICODE_ERROR);
+    if (status.right === STATUS_UP) setStatusRight(UNICODE_UP);
+    if (status.right === STATUS_DOWN) setStatusRight(UNICODE_DOWN);
+    if (status.right === STATUS_ERROR) setStatusRight(UNICODE_ERROR);
     console.log(status);
   }
 
@@ -82,7 +91,7 @@ function App() {
       const response = await fetch(toggleEndpoint, options);
       if (response.status !== 200) {
         setAuthToken(null);
-        localStorage.setItem(AUTH_TOKEN_KEY, null);
+        localStorage.removeItem(AUTH_TOKEN_KEY);
       }
       if (side === LEFT_BUTTON) setLeftButtonDisabled(false);
       if (side === RIGHT_BUTTON) setRightButtonDisabled(false);
