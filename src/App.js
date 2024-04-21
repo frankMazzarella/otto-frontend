@@ -47,7 +47,9 @@ function App() {
         setLeftButtonDisabled(false);
         setRightButtonDisabled(false);
       } catch (error) {
+        // TODO: consider consolidation catch error logic into a function
         console.error(error);
+        setAuthenticateButtonDisabled(true);
         setStatusLeft(UNICODE_ERROR);
         setStatusRight(UNICODE_ERROR);
       }
@@ -64,6 +66,7 @@ function App() {
         console.error(error);
         setLeftButtonDisabled(true);
         setRightButtonDisabled(true);
+        setAuthenticateButtonDisabled(true);
         setStatusLeft(UNICODE_ERROR);
         setStatusRight(UNICODE_ERROR);
       }
