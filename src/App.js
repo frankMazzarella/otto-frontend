@@ -47,11 +47,7 @@ function App() {
         setLeftButtonDisabled(false);
         setRightButtonDisabled(false);
       } catch (error) {
-        // TODO: consider consolidation catch error logic into a function
-        console.error(error);
-        setAuthenticateButtonDisabled(true);
-        setStatusLeft(UNICODE_ERROR);
-        setStatusRight(UNICODE_ERROR);
+        handleFetchStatusError(error);
       }
     }
     queryStatus();
@@ -63,16 +59,20 @@ function App() {
         await updateStatus(`${statusEndpoint}?longPoll=true`);
         startLongPoll();
       } catch (error) {
-        console.error(error);
-        setLeftButtonDisabled(true);
-        setRightButtonDisabled(true);
-        setAuthenticateButtonDisabled(true);
-        setStatusLeft(UNICODE_ERROR);
-        setStatusRight(UNICODE_ERROR);
+        handleFetchStatusError(error);
       }
     }
     startLongPoll();
   }, []);
+
+  function handleFetchStatusError(error) {
+    console.error(error);
+    setLeftButtonDisabled(true);
+    setRightButtonDisabled(true);
+    setAuthenticateButtonDisabled(true);
+    setStatusLeft(UNICODE_ERROR);
+    setStatusRight(UNICODE_ERROR);
+  }
 
   async function updateStatus(url) {
     const response = await fetch(url);
@@ -83,7 +83,6 @@ function App() {
     if (status.right === STATUS_UP) setStatusRight(UNICODE_UP);
     if (status.right === STATUS_DOWN) setStatusRight(UNICODE_DOWN);
     if (status.right === STATUS_ERROR) setStatusRight(UNICODE_ERROR);
-    console.log(status);
   }
 
   async function handleToggleButton(side) {
