@@ -49,6 +49,12 @@ function App() {
         handleFetchStatusError(error);
       }
     }
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        console.log("VISIBILIY CHANGE: VISIBLE");
+        queryStatus();
+      }
+    });
     queryStatus();
   }, []);
 
