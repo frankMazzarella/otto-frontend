@@ -5,7 +5,6 @@ import "./App.css";
 const UNICODE_UP = "↑";
 const UNICODE_DOWN = "↓";
 const UNICODE_LOADING = "⟳";
-const UNICODE_ERROR = "⊗";
 const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
 const LEFT_BUTTON = "left";
@@ -13,7 +12,6 @@ const RIGHT_BUTTON = "right";
 const AUTH_TOKEN_KEY = "auth_token";
 const STATUS_UP = "OPEN";
 const STATUS_DOWN = "CLOSED";
-const STATUS_ERROR = "ERROR";
 
 const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 const version = `v${process.env.REACT_APP_VERSION}`;
@@ -56,11 +54,13 @@ function App() {
 
   useEffect(() => {
     async function startLongPoll() {
+      console.log("starting long poll");
       try {
         await updateStatus(`${statusEndpoint}?longPoll=true`);
         startLongPoll();
       } catch (error) {
         handleFetchStatusError(error);
+        startLongPoll();
       }
     }
     startLongPoll();
@@ -71,8 +71,8 @@ function App() {
     setLeftButtonDisabled(true);
     setRightButtonDisabled(true);
     setAuthenticateButtonDisabled(true);
-    setStatusLeft(UNICODE_ERROR);
-    setStatusRight(UNICODE_ERROR);
+    setStatusLeft(UNICODE_LOADING);
+    setStatusRight(UNICODE_LOADING);
     setEnvironment(null);
   }
 
@@ -81,10 +81,8 @@ function App() {
     const status = await response.json();
     if (status.left === STATUS_UP) setStatusLeft(UNICODE_UP);
     if (status.left === STATUS_DOWN) setStatusLeft(UNICODE_DOWN);
-    if (status.left === STATUS_ERROR) setStatusLeft(UNICODE_ERROR);
     if (status.right === STATUS_UP) setStatusRight(UNICODE_UP);
     if (status.right === STATUS_DOWN) setStatusRight(UNICODE_DOWN);
-    if (status.right === STATUS_ERROR) setStatusRight(UNICODE_ERROR);
     setEnvironment(status.environment);
   }
 
