@@ -14,11 +14,11 @@
   padding-top: 100px;
   width: 80%;
   max-width: 600px;
-  font-size: 7em;
   font-weight: bold;
 }
 
 .status-item {
+  font-size: 7em;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,6 +27,14 @@
 .authorize {
   display: flex;
   flex-basis: 100%;
+}
+
+.environment-container {
+  display: flex;
+  flex-basis: 100%;
+  justify-content: space-around;
+  font-size: 1.5em;
+  margin-top: 25px;
 }
 
 .version {
@@ -38,7 +46,7 @@ button {
   border: none;
   color: #282c34;
   cursor: pointer;
-  font-size: 0.2em;
+  font-size: 1.8em;
   margin-top: 25px;
   padding: 10px 30px;
   width: 100%;

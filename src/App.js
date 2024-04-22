@@ -34,6 +34,7 @@ if (process.env.NODE_ENV === "production") {
 function App() {
   const [statusLeft, setStatusLeft] = useState(UNICODE_LOADING);
   const [statusRight, setStatusRight] = useState(UNICODE_LOADING);
+  const [environment, setEnvironment] = useState(null);
   const [authToken, setAuthToken] = useState(storedToken);
   const [leftButtonDisabled, setLeftButtonDisabled] = useState(true);
   const [rightButtonDisabled, setRightButtonDisabled] = useState(true);
@@ -72,6 +73,7 @@ function App() {
     setAuthenticateButtonDisabled(true);
     setStatusLeft(UNICODE_ERROR);
     setStatusRight(UNICODE_ERROR);
+    setEnvironment(null);
   }
 
   async function updateStatus(url) {
@@ -83,6 +85,7 @@ function App() {
     if (status.right === STATUS_UP) setStatusRight(UNICODE_UP);
     if (status.right === STATUS_DOWN) setStatusRight(UNICODE_DOWN);
     if (status.right === STATUS_ERROR) setStatusRight(UNICODE_ERROR);
+    setEnvironment(status.environment);
   }
 
   async function handleToggleButton(side) {
@@ -156,6 +159,12 @@ function App() {
             </button>
           ) : null}
         </div>
+        {environment ? (
+          <div className="environment-container">
+            <div>🌡 {environment.temperature}°F</div>
+            <div>🌢 {environment.humidity}%</div>
+          </div>
+        ) : null}
         <div className="authorize">
           {authToken ? null : (
             <button
