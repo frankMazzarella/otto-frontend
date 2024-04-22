@@ -60,7 +60,7 @@ function App() {
         startLongPoll();
       } catch (error) {
         handleFetchStatusError(error);
-        startLongPoll();
+        setTimeout(startLongPoll, 5000);
       }
     }
     startLongPoll();
