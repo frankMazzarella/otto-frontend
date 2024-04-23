@@ -9,8 +9,8 @@ import "./App.css";
 
 const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
-const LEFT_BUTTON = "left";
-const RIGHT_BUTTON = "right";
+const LEFT_BUTTON = "LEFT_BUTTON";
+const RIGHT_BUTTON = "RIGHT_BUTTON";
 const AUTH_TOKEN_KEY = "auth_token";
 const STATUS_OPEN = "OPEN";
 const STATUS_CLOSED = "CLOSED";
