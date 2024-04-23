@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { WiRaindrop, WiThermometerExterior } from "react-icons/wi";
+import { IoWater, IoThermometer } from "react-icons/io5";
 import {
   PiArrowFatLineDownFill,
   PiArrowFatLineUpFill,
@@ -11,7 +11,7 @@ const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
 const LEFT_BUTTON = "LEFT_BUTTON";
 const RIGHT_BUTTON = "RIGHT_BUTTON";
-const AUTH_TOKEN_KEY = "auth_token";
+const AUTH_TOKEN_KEY = "AUTH_TOKEN";
 const STATUS_OPEN = "OPEN";
 const STATUS_CLOSED = "CLOSED";
 const STATUS_LOADING = "LOADING";
@@ -180,11 +180,11 @@ function App() {
         {environment?.temperature && environment?.humidity ? (
           <div className="environment-container">
             <div>
-              <WiThermometerExterior className="environment-icon" />
+              <IoThermometer className="environment-icon" />
               {environment.temperature}°F
             </div>
             <div>
-              <WiRaindrop className="environment-icon" />
+              <IoWater className="environment-icon" />
               {environment.humidity}%
             </div>
           </div>
