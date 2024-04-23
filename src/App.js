@@ -37,7 +37,7 @@ function App() {
   const [leftButtonDisabled, setLeftButtonDisabled] = useState(true);
   const [rightButtonDisabled, setRightButtonDisabled] = useState(true);
   const [authenticateButtonDisabled, setAuthenticateButtonDisabled] =
-    useState(false);
+    useState(true);
 
   useEffect(() => {
     async function queryStatus() {
