@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-
+import { WiRaindrop, WiThermometerExterior } from "react-icons/wi";
+import {
+  PiArrowFatLineDownFill,
+  PiArrowFatLineUpFill,
+  PiArrowsClockwiseBold,
+} from "react-icons/pi";
 import "./App.css";
 
-const UNICODE_UP = "↑";
-const UNICODE_DOWN = "↓";
-const UNICODE_LOADING = "⟳";
 const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
 const LEFT_BUTTON = "left";
 const RIGHT_BUTTON = "right";
 const AUTH_TOKEN_KEY = "auth_token";
-const STATUS_UP = "OPEN";
-const STATUS_DOWN = "CLOSED";
+const STATUS_OPEN = "OPEN";
+const STATUS_CLOSED = "CLOSED";
+const STATUS_LOADING = "LOADING";
 
 const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 const version = `v${process.env.REACT_APP_VERSION}`;
@@ -30,8 +33,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function App() {
-  const [statusLeft, setStatusLeft] = useState(UNICODE_LOADING);
-  const [statusRight, setStatusRight] = useState(UNICODE_LOADING);
+  const [statusLeft, setStatusLeft] = useState(STATUS_LOADING);
+  const [statusRight, setStatusRight] = useState(STATUS_LOADING);
   const [environment, setEnvironment] = useState(null);
   const [authToken, setAuthToken] = useState(storedToken);
   const [leftButtonDisabled, setLeftButtonDisabled] = useState(true);
@@ -75,18 +78,18 @@ function App() {
     setLeftButtonDisabled(true);
     setRightButtonDisabled(true);
     setAuthenticateButtonDisabled(true);
-    setStatusLeft(UNICODE_LOADING);
-    setStatusRight(UNICODE_LOADING);
+    setStatusLeft(STATUS_LOADING);
+    setStatusRight(STATUS_LOADING);
     setEnvironment(null);
   }
 
   async function updateStatus(url) {
     const response = await fetch(url);
     const status = await response.json();
-    if (status.left === STATUS_UP) setStatusLeft(UNICODE_UP);
-    if (status.left === STATUS_DOWN) setStatusLeft(UNICODE_DOWN);
-    if (status.right === STATUS_UP) setStatusRight(UNICODE_UP);
-    if (status.right === STATUS_DOWN) setStatusRight(UNICODE_DOWN);
+    if (status.left === STATUS_OPEN) setStatusLeft(STATUS_OPEN);
+    if (status.left === STATUS_CLOSED) setStatusLeft(STATUS_CLOSED);
+    if (status.right === STATUS_OPEN) setStatusRight(STATUS_OPEN);
+    if (status.right === STATUS_CLOSED) setStatusRight(STATUS_CLOSED);
     setEnvironment(status.environment);
   }
 
@@ -136,11 +139,24 @@ function App() {
     };
   }
 
+  function renderStatusIcon(status) {
+    switch (status) {
+      case STATUS_LOADING:
+        return <PiArrowsClockwiseBold className="status-icon" />;
+      case STATUS_OPEN:
+        return <PiArrowFatLineUpFill className="status-icon" />;
+      case STATUS_CLOSED:
+        return <PiArrowFatLineDownFill className="status-icon" />;
+      default:
+        return <PiArrowsClockwiseBold className="status-icon" />;
+    }
+  }
+
   return (
     <div className="container">
       <div className="status-container">
         <div className="status-item">
-          {statusLeft}
+          {renderStatusIcon(statusLeft)}
           {authToken ? (
             <button
               disabled={leftButtonDisabled}
@@ -151,7 +167,7 @@ function App() {
           ) : null}
         </div>
         <div className="status-item">
-          {statusRight}
+          {renderStatusIcon(statusRight)}
           {authToken ? (
             <button
               disabled={rightButtonDisabled}
@@ -163,8 +179,14 @@ function App() {
         </div>
         {environment?.temperature && environment?.humidity ? (
           <div className="environment-container">
-            <div>🌡 {environment.temperature}°F</div>
-            <div>🌢 {environment.humidity}%</div>
+            <div>
+              <WiThermometerExterior className="environment-icon" />
+              {environment.temperature}°F
+            </div>
+            <div>
+              <WiRaindrop className="environment-icon" />
+              {environment.humidity}%
+            </div>
           </div>
         ) : null}
         <div className="authorize">
