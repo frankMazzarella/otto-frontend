@@ -51,7 +51,6 @@ function App() {
     }
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
-        console.log("VISIBILIY CHANGE: VISIBLE");
         queryStatus();
       }
     });
@@ -60,7 +59,6 @@ function App() {
 
   useEffect(() => {
     async function startLongPoll() {
-      console.log("starting long poll");
       try {
         await updateStatus(`${statusEndpoint}?longPoll=true`);
         startLongPoll();
@@ -163,7 +161,7 @@ function App() {
             </button>
           ) : null}
         </div>
-        {environment ? (
+        {environment?.temperature && environment?.humidity ? (
           <div className="environment-container">
             <div>🌡 {environment.temperature}°F</div>
             <div>🌢 {environment.humidity}%</div>
