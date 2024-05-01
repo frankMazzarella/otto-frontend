@@ -33,6 +33,8 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function App() {
+  const [timer, setTimer] = useState("0000");
+  const [lastUpdateTime, setLastUpdateTime] = useState(new Date().getTime());
   const [statusLeft, setStatusLeft] = useState(STATUS_LOADING);
   const [statusRight, setStatusRight] = useState(STATUS_LOADING);
   const [environment, setEnvironment] = useState(null);
@@ -41,6 +43,16 @@ function App() {
   const [rightButtonDisabled, setRightButtonDisabled] = useState(true);
   const [authenticateButtonDisabled, setAuthenticateButtonDisabled] =
     useState(false);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const now = new Date().getTime();
+      const seconds = Math.round((now - lastUpdateTime) / 1000);
+      const timeDisplay = seconds.toString().padStart(4, "0");
+      setTimer(timeDisplay);
+    }, 500);
+    return () => clearInterval(intervalId);
+  }, [lastUpdateTime]);
 
   useEffect(() => {
     async function queryStatus() {
@@ -91,6 +103,7 @@ function App() {
     if (status.right === STATUS_OPEN) setStatusRight(STATUS_OPEN);
     if (status.right === STATUS_CLOSED) setStatusRight(STATUS_CLOSED);
     setEnvironment(status.environment);
+    setLastUpdateTime(new Date().getTime());
   }
 
   async function handleToggleButton(side) {
@@ -155,6 +168,7 @@ function App() {
   return (
     <div className="container">
       <div className="status-container">
+        <div className="timer-container">{timer}</div>
         <div className="status-item">
           {renderStatusIcon(statusLeft)}
           {authToken ? (
