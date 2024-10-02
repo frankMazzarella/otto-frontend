@@ -32,21 +32,24 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function App() {
-  const [timer, setTimer] = useState("0000");
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date().getTime());
   const [doorStatusLeft, setDoorStatusLeft] = useState(STATUS_LOADING);
   const [doorStatusRight, setDoorStatusRight] = useState(STATUS_LOADING);
   const [environment, setEnvironment] = useState(null);
   const [authToken, setAuthToken] = useState(storedToken);
   const [toggleButtonDisabled, setToggleButtonDisabled] = useState(true);
+  const [toggleTimeoutActive, setToggleTimeoutActive] = useState(false);
   const [authButtonDisabled, setAuthButtonDisabled] = useState(false);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date().getTime();
-      const seconds = Math.round((now - lastUpdateTime) / 1000);
-      const timeDisplay = seconds.toString().padStart(4, "0");
-      setTimer(timeDisplay);
+      const dataAgeMs = Math.round((now - lastUpdateTime) / 1000);
+      if (dataAgeMs > 30000) {
+        setDoorStatusLeft(STATUS_LOADING);
+        setDoorStatusRight(STATUS_LOADING);
+        setEnvironment(null);
+      }
     }, 500);
     return () => clearInterval(intervalId);
   }, [lastUpdateTime]);
@@ -93,6 +96,7 @@ function App() {
     setEnvironment(null);
   }
 
+  // TODO: required as a dependency for the useeffects
   function updateGarageStatus(status) {
     if (status.left === STATUS_OPEN) setDoorStatusLeft(STATUS_OPEN);
     if (status.left === STATUS_CLOSED) setDoorStatusLeft(STATUS_CLOSED);
@@ -101,7 +105,7 @@ function App() {
     if (status.left === STATUS_CLOSED && status.right === STATUS_CLOSED) {
       setToggleButtonDisabled(true);
     } else {
-      setToggleButtonDisabled(false);
+      tryToEnableToggleButton();
     }
     setEnvironment(status.environment);
     setLastUpdateTime(new Date().getTime());
@@ -113,21 +117,27 @@ function App() {
       const options = getFetchOptions({ token: authToken });
       const response = await fetch(toggleEndpoint, options);
       if (response.status === 200) {
+        setToggleTimeoutActive(true);
         setTimeout(() => {
-          if (
-            doorStatusLeft === STATUS_OPEN ||
-            doorStatusRight === STATUS_OPEN
-          ) {
-            setToggleButtonDisabled(false);
-          }
+          setToggleTimeoutActive(false);
+          tryToEnableToggleButton();
         }, 15000);
       } else {
         setAuthToken(null);
         localStorage.removeItem(AUTH_TOKEN_KEY);
-        setToggleButtonDisabled(false);
+        tryToEnableToggleButton();
       }
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  function tryToEnableToggleButton() {
+    if (
+      (doorStatusLeft === STATUS_OPEN || doorStatusRight === STATUS_OPEN) &&
+      !toggleTimeoutActive
+    ) {
+      setToggleButtonDisabled(false);
     }
   }
 
@@ -176,7 +186,6 @@ function App() {
   return (
     <div className="container">
       <div className="status-container">
-        <div className="timer-container">{timer}</div>
         <div className="status-item">{renderStatusIcon(doorStatusLeft)}</div>
         <div className="status-item">{renderStatusIcon(doorStatusRight)}</div>
         {environment &&
