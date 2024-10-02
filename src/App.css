@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   min-height: 100vh;
-  background-color: #282c34;
+  background-color: #16191c;
 }
 
 .status-container {
@@ -23,11 +23,9 @@
   align-items: center;
 }
 
-.authorize {
+.button-container {
   display: flex;
   flex-basis: 100%;
-  /* TODO: remove once ready to handle button toggles */
-  display: none;
 }
 
 .environment-container {

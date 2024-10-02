@@ -5,12 +5,11 @@ import {
   PiArrowFatLineUpFill,
   PiArrowsClockwiseBold,
 } from "react-icons/pi";
+
 import "./App.css";
 
 const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
-const LEFT_BUTTON = "LEFT_BUTTON";
-const RIGHT_BUTTON = "RIGHT_BUTTON";
 const AUTH_TOKEN_KEY = "AUTH_TOKEN";
 const STATUS_OPEN = "OPEN";
 const STATUS_CLOSED = "CLOSED";
@@ -35,14 +34,12 @@ if (process.env.NODE_ENV === "production") {
 function App() {
   const [timer, setTimer] = useState("0000");
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date().getTime());
-  const [statusLeft, setStatusLeft] = useState(STATUS_LOADING);
-  const [statusRight, setStatusRight] = useState(STATUS_LOADING);
+  const [doorStatusLeft, setDoorStatusLeft] = useState(STATUS_LOADING);
+  const [doorStatusRight, setDoorStatusRight] = useState(STATUS_LOADING);
   const [environment, setEnvironment] = useState(null);
   const [authToken, setAuthToken] = useState(storedToken);
-  const [leftButtonDisabled, setLeftButtonDisabled] = useState(true);
-  const [rightButtonDisabled, setRightButtonDisabled] = useState(true);
-  const [authenticateButtonDisabled, setAuthenticateButtonDisabled] =
-    useState(false);
+  const [toggleButtonDisabled, setToggleButtonDisabled] = useState(true);
+  const [authButtonDisabled, setAuthButtonDisabled] = useState(false);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -55,27 +52,29 @@ function App() {
   }, [lastUpdateTime]);
 
   useEffect(() => {
-    async function queryStatus() {
+    async function queryGarageStatus() {
       try {
-        await updateStatus(statusEndpoint);
-        setLeftButtonDisabled(false);
-        setRightButtonDisabled(false);
+        const response = await fetch(statusEndpoint);
+        const status = await response.json();
+        updateGarageStatus(status);
       } catch (error) {
         handleFetchStatusError(error);
       }
     }
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
-        queryStatus();
+        queryGarageStatus();
       }
     });
-    queryStatus();
+    queryGarageStatus();
   }, []);
 
   useEffect(() => {
     async function startLongPoll() {
       try {
-        await updateStatus(`${statusEndpoint}?longPoll=true`);
+        const response = await fetch(`${statusEndpoint}?longPoll=true`);
+        const status = await response.json();
+        updateGarageStatus(status);
         startLongPoll();
       } catch (error) {
         handleFetchStatusError(error);
@@ -87,37 +86,46 @@ function App() {
 
   function handleFetchStatusError(error) {
     console.error(error);
-    setLeftButtonDisabled(true);
-    setRightButtonDisabled(true);
-    setAuthenticateButtonDisabled(true);
-    setStatusLeft(STATUS_LOADING);
-    setStatusRight(STATUS_LOADING);
+    setToggleButtonDisabled(true);
+    setAuthButtonDisabled(true);
+    setDoorStatusLeft(STATUS_LOADING);
+    setDoorStatusRight(STATUS_LOADING);
     setEnvironment(null);
   }
 
-  async function updateStatus(url) {
-    const response = await fetch(url);
-    const status = await response.json();
-    if (status.left === STATUS_OPEN) setStatusLeft(STATUS_OPEN);
-    if (status.left === STATUS_CLOSED) setStatusLeft(STATUS_CLOSED);
-    if (status.right === STATUS_OPEN) setStatusRight(STATUS_OPEN);
-    if (status.right === STATUS_CLOSED) setStatusRight(STATUS_CLOSED);
+  function updateGarageStatus(status) {
+    if (status.left === STATUS_OPEN) setDoorStatusLeft(STATUS_OPEN);
+    if (status.left === STATUS_CLOSED) setDoorStatusLeft(STATUS_CLOSED);
+    if (status.right === STATUS_OPEN) setDoorStatusRight(STATUS_OPEN);
+    if (status.right === STATUS_CLOSED) setDoorStatusRight(STATUS_CLOSED);
+    if (status.left === STATUS_CLOSED && status.right === STATUS_CLOSED) {
+      setToggleButtonDisabled(true);
+    } else {
+      setToggleButtonDisabled(false);
+    }
     setEnvironment(status.environment);
     setLastUpdateTime(new Date().getTime());
   }
 
-  async function handleToggleButton(side) {
-    if (side === LEFT_BUTTON) setLeftButtonDisabled(true);
-    if (side === RIGHT_BUTTON) setRightButtonDisabled(true);
+  async function handleToggleButton() {
+    setToggleButtonDisabled(true);
     try {
-      const options = getFetchOptions({ token: authToken, side });
+      const options = getFetchOptions({ token: authToken });
       const response = await fetch(toggleEndpoint, options);
-      if (response.status !== 200) {
+      if (response.status === 200) {
+        setTimeout(() => {
+          if (
+            doorStatusLeft === STATUS_OPEN ||
+            doorStatusRight === STATUS_OPEN
+          ) {
+            setToggleButtonDisabled(false);
+          }
+        }, 15000);
+      } else {
         setAuthToken(null);
         localStorage.removeItem(AUTH_TOKEN_KEY);
+        setToggleButtonDisabled(false);
       }
-      if (side === LEFT_BUTTON) setLeftButtonDisabled(false);
-      if (side === RIGHT_BUTTON) setRightButtonDisabled(false);
     } catch (error) {
       console.error(error);
     }
@@ -126,7 +134,7 @@ function App() {
   async function handleAuthenticateButton() {
     const password = prompt("Password");
     if (password) {
-      setAuthenticateButtonDisabled(true);
+      setAuthButtonDisabled(true);
       try {
         const options = getFetchOptions({ password });
         const response = await fetch(authenticateEndpoint, options);
@@ -138,7 +146,7 @@ function App() {
       } catch (error) {
         console.error(error);
       }
-      setAuthenticateButtonDisabled(false);
+      setAuthButtonDisabled(false);
     }
   }
 
@@ -169,29 +177,11 @@ function App() {
     <div className="container">
       <div className="status-container">
         <div className="timer-container">{timer}</div>
-        <div className="status-item">
-          {renderStatusIcon(statusLeft)}
-          {authToken ? (
-            <button
-              disabled={leftButtonDisabled}
-              onClick={() => handleToggleButton(LEFT_BUTTON)}
-            >
-              Toggle
-            </button>
-          ) : null}
-        </div>
-        <div className="status-item">
-          {renderStatusIcon(statusRight)}
-          {authToken ? (
-            <button
-              disabled={rightButtonDisabled}
-              onClick={() => handleToggleButton(RIGHT_BUTTON)}
-            >
-              Toggle
-            </button>
-          ) : null}
-        </div>
-        {environment?.temperature && environment?.humidity ? (
+        <div className="status-item">{renderStatusIcon(doorStatusLeft)}</div>
+        <div className="status-item">{renderStatusIcon(doorStatusRight)}</div>
+        {environment &&
+        !Number.isNaN(environment?.temperature) &&
+        !Number.isNaN(environment?.humidity) ? (
           <div className="environment-container">
             <div>
               <IoThermometer className="environment-icon" />
@@ -203,15 +193,23 @@ function App() {
             </div>
           </div>
         ) : null}
-        <div className="authorize">
+        <div className="button-container">
           {authToken ? null : (
             <button
-              disabled={authenticateButtonDisabled}
+              disabled={authButtonDisabled}
               onClick={handleAuthenticateButton}
             >
               Authenticate
             </button>
           )}
+          {authToken ? (
+            <button
+              disabled={toggleButtonDisabled}
+              onClick={() => handleToggleButton()}
+            >
+              Toggle
+            </button>
+          ) : null}
         </div>
       </div>
       <div className="version">{version}</div>
