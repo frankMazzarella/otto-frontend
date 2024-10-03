@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { IoWater, IoThermometer } from "react-icons/io5";
 import {
   PiArrowFatLineDownFill,
@@ -41,6 +41,36 @@ function App() {
   const [toggleTimeoutActive, setToggleTimeoutActive] = useState(false);
   const [authButtonDisabled, setAuthButtonDisabled] = useState(false);
 
+  // TODO: the useEffect, useState situation in this file is a fucking mess
+  // need to refactor polling logic into another service or something
+  // also this file does too much and should be separated into components
+
+  const tryToEnableToggleButton = useCallback(() => {
+    if (
+      (doorStatusLeft === STATUS_OPEN || doorStatusRight === STATUS_OPEN) &&
+      !toggleTimeoutActive
+    ) {
+      setToggleButtonDisabled(false);
+    }
+  }, [doorStatusLeft, doorStatusRight, toggleTimeoutActive]);
+
+  const updateGarageStatus = useCallback(
+    (status) => {
+      if (status.left === STATUS_OPEN) setDoorStatusLeft(STATUS_OPEN);
+      if (status.left === STATUS_CLOSED) setDoorStatusLeft(STATUS_CLOSED);
+      if (status.right === STATUS_OPEN) setDoorStatusRight(STATUS_OPEN);
+      if (status.right === STATUS_CLOSED) setDoorStatusRight(STATUS_CLOSED);
+      if (status.left === STATUS_CLOSED && status.right === STATUS_CLOSED) {
+        setToggleButtonDisabled(true);
+      } else {
+        tryToEnableToggleButton();
+      }
+      setEnvironment(status.environment);
+      setLastUpdateTime(new Date().getTime());
+    },
+    [tryToEnableToggleButton]
+  );
+
   useEffect(() => {
     console.log("USE EFFECT - TIMER");
     const intervalId = setInterval(() => {
@@ -72,7 +102,7 @@ function App() {
       }
     });
     queryGarageStatus();
-  }, []);
+  }, [updateGarageStatus]);
 
   useEffect(() => {
     console.log("USE EFFECT - STATUS LONG POLL");
@@ -88,7 +118,7 @@ function App() {
       }
     }
     startLongPoll();
-  }, []);
+  }, [updateGarageStatus]);
 
   const handleFetchStatusError = (error) => {
     console.error(error);
@@ -97,21 +127,6 @@ function App() {
     setDoorStatusLeft(STATUS_LOADING);
     setDoorStatusRight(STATUS_LOADING);
     setEnvironment(null);
-  };
-
-  // TODO: required as a dependency for the useeffects
-  const updateGarageStatus = (status) => {
-    if (status.left === STATUS_OPEN) setDoorStatusLeft(STATUS_OPEN);
-    if (status.left === STATUS_CLOSED) setDoorStatusLeft(STATUS_CLOSED);
-    if (status.right === STATUS_OPEN) setDoorStatusRight(STATUS_OPEN);
-    if (status.right === STATUS_CLOSED) setDoorStatusRight(STATUS_CLOSED);
-    if (status.left === STATUS_CLOSED && status.right === STATUS_CLOSED) {
-      setToggleButtonDisabled(true);
-    } else {
-      tryToEnableToggleButton();
-    }
-    setEnvironment(status.environment);
-    setLastUpdateTime(new Date().getTime());
   };
 
   const handleToggleButton = async () => {
@@ -132,15 +147,6 @@ function App() {
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const tryToEnableToggleButton = () => {
-    if (
-      (doorStatusLeft === STATUS_OPEN || doorStatusRight === STATUS_OPEN) &&
-      !toggleTimeoutActive
-    ) {
-      setToggleButtonDisabled(false);
     }
   };
 
