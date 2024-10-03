@@ -8,7 +8,9 @@ import {
 
 import "./App.css";
 
-const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
+// TODO: change before master branch
+// const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
+const DOMAIN_PROD = "174.178.77.104:4000";
 const DOMAIN_LOCAL = "http://localhost:4000";
 const AUTH_TOKEN_KEY = "AUTH_TOKEN";
 const STATUS_OPEN = "OPEN";
@@ -42,6 +44,7 @@ function App() {
   const [authButtonDisabled, setAuthButtonDisabled] = useState(false);
 
   useEffect(() => {
+    console.log("USE EFFECT - TIMER");
     const intervalId = setInterval(() => {
       const now = new Date().getTime();
       const dataAgeMs = Math.round(now - lastUpdateTime);
@@ -55,6 +58,7 @@ function App() {
   }, [lastUpdateTime]);
 
   useEffect(() => {
+    console.log("USE EFFECT - STATUS");
     async function queryGarageStatus() {
       try {
         const response = await fetch(statusEndpoint);
@@ -73,6 +77,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log("USE EFFECT - STATUS LONG POLL");
     async function startLongPoll() {
       try {
         const response = await fetch(`${statusEndpoint}?longPoll=true`);
@@ -87,17 +92,17 @@ function App() {
     startLongPoll();
   }, []);
 
-  function handleFetchStatusError(error) {
+  const handleFetchStatusError = (error) => {
     console.error(error);
     setToggleButtonDisabled(true);
     setAuthButtonDisabled(true);
     setDoorStatusLeft(STATUS_LOADING);
     setDoorStatusRight(STATUS_LOADING);
     setEnvironment(null);
-  }
+  };
 
   // TODO: required as a dependency for the useeffects
-  function updateGarageStatus(status) {
+  const updateGarageStatus = (status) => {
     if (status.left === STATUS_OPEN) setDoorStatusLeft(STATUS_OPEN);
     if (status.left === STATUS_CLOSED) setDoorStatusLeft(STATUS_CLOSED);
     if (status.right === STATUS_OPEN) setDoorStatusRight(STATUS_OPEN);
@@ -109,9 +114,9 @@ function App() {
     }
     setEnvironment(status.environment);
     setLastUpdateTime(new Date().getTime());
-  }
+  };
 
-  async function handleToggleButton() {
+  const handleToggleButton = async () => {
     setToggleButtonDisabled(true);
     try {
       const options = getFetchOptions({ token: authToken });
@@ -130,18 +135,18 @@ function App() {
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
-  function tryToEnableToggleButton() {
+  const tryToEnableToggleButton = () => {
     if (
       (doorStatusLeft === STATUS_OPEN || doorStatusRight === STATUS_OPEN) &&
       !toggleTimeoutActive
     ) {
       setToggleButtonDisabled(false);
     }
-  }
+  };
 
-  async function handleAuthenticateButton() {
+  const handleAuthenticateButton = async () => {
     const password = prompt("Password");
     if (password) {
       setAuthButtonDisabled(true);
@@ -158,9 +163,9 @@ function App() {
       }
       setAuthButtonDisabled(false);
     }
-  }
+  };
 
-  function getFetchOptions(postBody) {
+  const getFetchOptions = (postBody) => {
     return {
       method: "POST",
       headers: {
@@ -168,9 +173,9 @@ function App() {
       },
       body: JSON.stringify(postBody),
     };
-  }
+  };
 
-  function renderStatusIcon(status) {
+  const renderStatusIcon = (status) => {
     switch (status) {
       case STATUS_LOADING:
         return <PiArrowsClockwiseBold className="status-icon" />;
@@ -181,7 +186,7 @@ function App() {
       default:
         return <PiArrowsClockwiseBold className="status-icon" />;
     }
-  }
+  };
 
   return (
     <div className="container">
