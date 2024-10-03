@@ -44,13 +44,13 @@ function App() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const now = new Date().getTime();
-      const dataAgeMs = Math.round((now - lastUpdateTime) / 1000);
+      const dataAgeMs = Math.round(now - lastUpdateTime);
       if (dataAgeMs > 30000) {
         setDoorStatusLeft(STATUS_LOADING);
         setDoorStatusRight(STATUS_LOADING);
         setEnvironment(null);
       }
-    }, 500);
+    }, 5000);
     return () => clearInterval(intervalId);
   }, [lastUpdateTime]);
 
