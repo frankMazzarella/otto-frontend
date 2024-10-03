@@ -8,9 +8,7 @@ import {
 
 import "./App.css";
 
-// TODO: change before master branch
-// const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
-const DOMAIN_PROD = "http://174.178.77.104:4000";
+const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
 const DOMAIN_LOCAL = "http://localhost:4000";
 const AUTH_TOKEN_KEY = "AUTH_TOKEN";
 const STATUS_OPEN = "OPEN";
