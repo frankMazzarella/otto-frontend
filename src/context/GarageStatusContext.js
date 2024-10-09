@@ -10,12 +10,10 @@ export const GarageStatusContextProvider = ({ children }) => {
   const [doorStatusLeft, setDoorStatusLeft] = useState(Status.LOADING);
   const [doorStatusRight, setDoorStatusRight] = useState(Status.LOADING);
   const [environment, setEnvironment] = useState(null);
+  // TODO: context depending on another context feels like an anti pattern
   const { statusEndpoint } = useContext(ApiEndpointContext);
 
-  // TODO: do not commit console.logs to master
-
   useEffect(() => {
-    console.log("USE EFFECT - TIMER");
     const intervalId = setInterval(() => {
       const now = new Date().getTime();
       const dataAgeMs = Math.round(now - lastUpdateTime);
@@ -29,7 +27,6 @@ export const GarageStatusContextProvider = ({ children }) => {
   }, [lastUpdateTime]);
 
   useEffect(() => {
-    console.log("USE EFFECT - STATUS");
     async function queryGarageStatus() {
       try {
         const response = await fetch(statusEndpoint);
@@ -41,7 +38,6 @@ export const GarageStatusContextProvider = ({ children }) => {
     }
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
-        console.log("DOCUMENT VISIBLE");
         queryGarageStatus();
       }
     });
@@ -49,7 +45,6 @@ export const GarageStatusContextProvider = ({ children }) => {
   }, [statusEndpoint]);
 
   useEffect(() => {
-    console.log("USE EFFECT - STATUS LONG POLL");
     async function startLongPoll() {
       try {
         const response = await fetch(`${statusEndpoint}?longPoll=true`);
@@ -74,7 +69,7 @@ export const GarageStatusContextProvider = ({ children }) => {
   };
 
   const handleFetchStatusError = (error) => {
-    console.error(error);
+    console.error(`fetch status error: ${error}`);
     setDoorStatusLeft(Status.LOADING);
     setDoorStatusRight(Status.LOADING);
     setEnvironment(null);

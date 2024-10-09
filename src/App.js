@@ -16,6 +16,7 @@ const AUTH_TOKEN_KEY = "AUTH_TOKEN";
 const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 const version = `v${process.env.REACT_APP_VERSION}`;
 
+// TODO: should not house entire application in App()
 function App() {
   const [authToken, setAuthToken] = useState(storedToken);
   const [toggleButtonDisabled, setToggleButtonDisabled] = useState(true);
@@ -60,7 +61,7 @@ function App() {
         setTimeout(() => {
           setToggleTimeoutActive(false);
           tryToEnableToggleButton();
-        }, 15000);
+        }, 20000);
       } else {
         setAuthToken(null);
         localStorage.removeItem(AUTH_TOKEN_KEY);
