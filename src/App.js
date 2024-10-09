@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback, useContext, useEffect } from "react";
 import { IoWater, IoThermometer } from "react-icons/io5";
 import {
   PiArrowFatLineDownFill,
@@ -6,128 +6,49 @@ import {
   PiArrowsClockwiseBold,
 } from "react-icons/pi";
 
+import { Status } from "./enums/Status";
+import { GarageStatusContext } from "./context/GarageStatusContext";
+import { ApiEndpointContext } from "./context/ApiEndpointcontext";
 import "./App.css";
 
-const DOMAIN_PROD = "https://desired-mollusk-naturally.ngrok-free.app";
-const DOMAIN_LOCAL = "http://localhost:4000";
 const AUTH_TOKEN_KEY = "AUTH_TOKEN";
-const STATUS_OPEN = "OPEN";
-const STATUS_CLOSED = "CLOSED";
-const STATUS_LOADING = "LOADING";
 
 const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 const version = `v${process.env.REACT_APP_VERSION}`;
-let statusEndpoint;
-let toggleEndpoint;
-let authenticateEndpoint;
-
-if (process.env.NODE_ENV === "production") {
-  statusEndpoint = `${DOMAIN_PROD}/api/v1/status`;
-  toggleEndpoint = `${DOMAIN_PROD}/api/v1/toggle`;
-  authenticateEndpoint = `${DOMAIN_PROD}/api/v1/authenticate`;
-} else {
-  statusEndpoint = `${DOMAIN_LOCAL}/api/v1/status`;
-  toggleEndpoint = `${DOMAIN_LOCAL}/api/v1/toggle`;
-  authenticateEndpoint = `${DOMAIN_LOCAL}/api/v1/authenticate`;
-}
 
 function App() {
-  const [lastUpdateTime, setLastUpdateTime] = useState(new Date().getTime());
-  const [doorStatusLeft, setDoorStatusLeft] = useState(STATUS_LOADING);
-  const [doorStatusRight, setDoorStatusRight] = useState(STATUS_LOADING);
-  const [environment, setEnvironment] = useState(null);
   const [authToken, setAuthToken] = useState(storedToken);
   const [toggleButtonDisabled, setToggleButtonDisabled] = useState(true);
   const [toggleTimeoutActive, setToggleTimeoutActive] = useState(false);
   const [authButtonDisabled, setAuthButtonDisabled] = useState(false);
-
-  // TODO: the useEffect, useState situation in this file is a fucking mess
-  // need to refactor polling logic into another service or something
-  // also this file does too much and should be separated into components
+  const { toggleEndpoint, authenticateEndpoint } =
+    useContext(ApiEndpointContext);
+  const { doorStatusLeft, doorStatusRight, environment } =
+    useContext(GarageStatusContext);
 
   const tryToEnableToggleButton = useCallback(() => {
     if (
-      (doorStatusLeft === STATUS_OPEN || doorStatusRight === STATUS_OPEN) &&
+      (doorStatusLeft === Status.OPEN || doorStatusRight === Status.OPEN) &&
       !toggleTimeoutActive
     ) {
       setToggleButtonDisabled(false);
     }
   }, [doorStatusLeft, doorStatusRight, toggleTimeoutActive]);
 
-  const updateGarageStatus = useCallback(
-    (status) => {
-      if (status.left === STATUS_OPEN) setDoorStatusLeft(STATUS_OPEN);
-      if (status.left === STATUS_CLOSED) setDoorStatusLeft(STATUS_CLOSED);
-      if (status.right === STATUS_OPEN) setDoorStatusRight(STATUS_OPEN);
-      if (status.right === STATUS_CLOSED) setDoorStatusRight(STATUS_CLOSED);
-      if (status.left === STATUS_CLOSED && status.right === STATUS_CLOSED) {
-        setToggleButtonDisabled(true);
-      } else {
-        tryToEnableToggleButton();
-      }
-      setEnvironment(status.environment);
-      setLastUpdateTime(new Date().getTime());
-    },
-    [tryToEnableToggleButton]
-  );
-
   useEffect(() => {
-    console.log("USE EFFECT - TIMER");
-    const intervalId = setInterval(() => {
-      const now = new Date().getTime();
-      const dataAgeMs = Math.round(now - lastUpdateTime);
-      if (dataAgeMs > 30000) {
-        setDoorStatusLeft(STATUS_LOADING);
-        setDoorStatusRight(STATUS_LOADING);
-        setEnvironment(null);
-      }
-    }, 5000);
-    return () => clearInterval(intervalId);
-  }, [lastUpdateTime]);
-
-  useEffect(() => {
-    console.log("USE EFFECT - STATUS");
-    async function queryGarageStatus() {
-      try {
-        const response = await fetch(statusEndpoint);
-        const status = await response.json();
-        updateGarageStatus(status);
-      } catch (error) {
-        handleFetchStatusError(error);
-      }
+    if (doorStatusLeft === Status.CLOSED && doorStatusRight === Status.CLOSED) {
+      setToggleButtonDisabled(true);
+    } else {
+      tryToEnableToggleButton();
     }
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-        queryGarageStatus();
-      }
-    });
-    queryGarageStatus();
-  }, [updateGarageStatus]);
-
-  useEffect(() => {
-    console.log("USE EFFECT - STATUS LONG POLL");
-    async function startLongPoll() {
-      try {
-        const response = await fetch(`${statusEndpoint}?longPoll=true`);
-        const status = await response.json();
-        updateGarageStatus(status);
-        startLongPoll();
-      } catch (error) {
-        handleFetchStatusError(error);
-        setTimeout(startLongPoll, 5000);
-      }
+    if (
+      doorStatusLeft === Status.LOADING &&
+      doorStatusRight === Status.LOADING
+    ) {
+      setToggleButtonDisabled(true);
+      setAuthButtonDisabled(true);
     }
-    startLongPoll();
-  }, [updateGarageStatus]);
-
-  const handleFetchStatusError = (error) => {
-    console.error(error);
-    setToggleButtonDisabled(true);
-    setAuthButtonDisabled(true);
-    setDoorStatusLeft(STATUS_LOADING);
-    setDoorStatusRight(STATUS_LOADING);
-    setEnvironment(null);
-  };
+  }, [doorStatusLeft, doorStatusRight, tryToEnableToggleButton]);
 
   const handleToggleButton = async () => {
     setToggleButtonDisabled(true);
@@ -181,11 +102,11 @@ function App() {
 
   const renderStatusIcon = (status) => {
     switch (status) {
-      case STATUS_LOADING:
+      case Status.LOADING:
         return <PiArrowsClockwiseBold className="status-icon" />;
-      case STATUS_OPEN:
+      case Status.OPEN:
         return <PiArrowFatLineUpFill className="status-icon" />;
-      case STATUS_CLOSED:
+      case Status.CLOSED:
         return <PiArrowFatLineDownFill className="status-icon" />;
       default:
         return <PiArrowsClockwiseBold className="status-icon" />;
