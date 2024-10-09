@@ -48,6 +48,8 @@ function App() {
     ) {
       setToggleButtonDisabled(true);
       setAuthButtonDisabled(true);
+    } else {
+      setAuthButtonDisabled(false);
     }
   }, [doorStatusLeft, doorStatusRight, tryToEnableToggleButton]);
 
@@ -68,7 +70,9 @@ function App() {
         tryToEnableToggleButton();
       }
     } catch (error) {
+      // TODO: add better logging for all catch blocks
       console.error(error);
+      tryToEnableToggleButton();
     }
   };
 
