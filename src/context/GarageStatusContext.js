@@ -16,7 +16,7 @@ export const GarageStatusContextProvider = ({ children }) => {
     const intervalId = setInterval(() => {
       const now = new Date().getTime();
       const dataAgeMs = Math.round(now - lastUpdateTime);
-      if (dataAgeMs > 30000) {
+      if (dataAgeMs > 40000) {
         setDoorStatusLeft(Status.LOADING);
         setDoorStatusRight(Status.LOADING);
         setEnvironment(null);
