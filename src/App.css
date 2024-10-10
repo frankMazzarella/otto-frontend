@@ -28,14 +28,6 @@
   flex-basis: 100%;
 }
 
-.environment-container {
-  display: flex;
-  flex-basis: 100%;
-  justify-content: space-around;
-  font-size: 1.5em;
-  margin-top: 35px;
-}
-
 .version {
   color: #5e5e5e;
 }

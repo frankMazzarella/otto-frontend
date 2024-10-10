@@ -10,7 +10,6 @@ export const GarageStatusContextProvider = ({ children }) => {
   const [doorStatusLeft, setDoorStatusLeft] = useState(Status.LOADING);
   const [doorStatusRight, setDoorStatusRight] = useState(Status.LOADING);
   const [environment, setEnvironment] = useState(null);
-  // TODO: context depending on another context feels like an anti pattern
   const { statusEndpoint } = useContext(ApiEndpointContext);
 
   useEffect(() => {

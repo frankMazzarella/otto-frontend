@@ -1,11 +1,11 @@
 import { useState, useCallback, useContext, useEffect } from "react";
-import { IoWater, IoThermometer } from "react-icons/io5";
 import {
   PiArrowFatLineDownFill,
   PiArrowFatLineUpFill,
   PiArrowsClockwiseBold,
 } from "react-icons/pi";
 
+import { Environment } from "./Environment";
 import { Status } from "./enums/Status";
 import { GarageStatusContext } from "./context/GarageStatusContext";
 import { ApiEndpointContext } from "./context/ApiEndpointcontext";
@@ -17,15 +17,14 @@ const storedToken = localStorage.getItem(AUTH_TOKEN_KEY);
 const version = `v${process.env.REACT_APP_VERSION}`;
 
 // TODO: should not house entire application in App()
-function App() {
+export const App = () => {
   const [authToken, setAuthToken] = useState(storedToken);
   const [toggleButtonDisabled, setToggleButtonDisabled] = useState(true);
   const [toggleTimeoutActive, setToggleTimeoutActive] = useState(false);
   const [authButtonDisabled, setAuthButtonDisabled] = useState(false);
   const { toggleEndpoint, authenticateEndpoint } =
     useContext(ApiEndpointContext);
-  const { doorStatusLeft, doorStatusRight, environment } =
-    useContext(GarageStatusContext);
+  const { doorStatusLeft, doorStatusRight } = useContext(GarageStatusContext);
 
   const tryToEnableToggleButton = useCallback(() => {
     if (
@@ -123,20 +122,7 @@ function App() {
       <div className="status-container">
         <div className="status-item">{renderStatusIcon(doorStatusLeft)}</div>
         <div className="status-item">{renderStatusIcon(doorStatusRight)}</div>
-        {environment &&
-        !Number.isNaN(environment?.temperature) &&
-        !Number.isNaN(environment?.humidity) ? (
-          <div className="environment-container">
-            <div>
-              <IoThermometer className="environment-icon" />
-              {environment.temperature}°F
-            </div>
-            <div>
-              <IoWater className="environment-icon" />
-              {environment.humidity}%
-            </div>
-          </div>
-        ) : null}
+        <Environment />
         <div className="button-container">
           {authToken ? null : (
             <button
@@ -159,6 +145,4 @@ function App() {
       <div className="version">{version}</div>
     </div>
   );
-}
-
-export default App;
+};
