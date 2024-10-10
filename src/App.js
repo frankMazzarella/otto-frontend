@@ -117,30 +117,32 @@ export const App = () => {
     }
   };
 
+  // TODO: why is the button container in the status container
+  // TODO: why is environment in status container
   return (
-    <div className="container">
+    <div className="app-container">
       <div className="status-container">
         <div className="status-item">{renderStatusIcon(doorStatusLeft)}</div>
         <div className="status-item">{renderStatusIcon(doorStatusRight)}</div>
         <Environment />
-        <div className="button-container">
-          {authToken ? null : (
-            <button
-              disabled={authButtonDisabled}
-              onClick={handleAuthenticateButton}
-            >
-              Authenticate
-            </button>
-          )}
-          {authToken ? (
-            <button
-              disabled={toggleButtonDisabled}
-              onClick={() => handleToggleButton()}
-            >
-              Toggle
-            </button>
-          ) : null}
-        </div>
+      </div>
+      <div className="button-container">
+        {authToken ? null : (
+          <button
+            disabled={authButtonDisabled}
+            onClick={handleAuthenticateButton}
+          >
+            Authenticate
+          </button>
+        )}
+        {authToken ? (
+          <button
+            disabled={toggleButtonDisabled}
+            onClick={() => handleToggleButton()}
+          >
+            Toggle
+          </button>
+        ) : null}
       </div>
       <div className="version">{version}</div>
     </div>
