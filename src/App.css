@@ -8,30 +8,7 @@
   margin: auto;
 }
 
-.button-container {
-  width: 90%;
-}
-
 .version {
   margin-top: auto;
   color: #5e5e5e;
-}
-
-button {
-  background-color: white;
-  border: none;
-  color: #282c34;
-  cursor: pointer;
-  font-size: 1.8em;
-  margin-top: 25px;
-  padding: 10px 30px;
-  width: 100%;
-}
-
-button:active {
-  background-color: #ccc;
-}
-
-button:disabled {
-  background-color: #5e5e5e;
 }
