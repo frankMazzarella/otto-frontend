@@ -1,14 +1,14 @@
 import { createContext, useEffect, useState, useContext } from "react";
 
-import { Status } from "../enums/Status";
+import { DoorState } from "../enums/DoorState";
 import { ApiEndpointContext } from "./ApiEndpointcontext";
 
 export const GarageStatusContext = createContext();
 
 export const GarageStatusContextProvider = ({ children }) => {
   const [lastUpdateTime, setLastUpdateTime] = useState(new Date().getTime());
-  const [doorStatusLeft, setDoorStatusLeft] = useState(Status.LOADING);
-  const [doorStatusRight, setDoorStatusRight] = useState(Status.LOADING);
+  const [doorStatusLeft, setDoorStatusLeft] = useState(DoorState.LOADING);
+  const [doorStatusRight, setDoorStatusRight] = useState(DoorState.LOADING);
   const [environment, setEnvironment] = useState(null);
   const { statusEndpoint } = useContext(ApiEndpointContext);
 
@@ -17,8 +17,8 @@ export const GarageStatusContextProvider = ({ children }) => {
       const now = new Date().getTime();
       const dataAgeMs = Math.round(now - lastUpdateTime);
       if (dataAgeMs > 40000) {
-        setDoorStatusLeft(Status.LOADING);
-        setDoorStatusRight(Status.LOADING);
+        setDoorStatusLeft(DoorState.LOADING);
+        setDoorStatusRight(DoorState.LOADING);
         setEnvironment(null);
       }
     }, 1000);
@@ -59,18 +59,18 @@ export const GarageStatusContextProvider = ({ children }) => {
   }, [statusEndpoint]);
 
   const updateGarageStatus = (status) => {
-    if (status.left === Status.OPEN) setDoorStatusLeft(Status.OPEN);
-    if (status.left === Status.CLOSED) setDoorStatusLeft(Status.CLOSED);
-    if (status.right === Status.OPEN) setDoorStatusRight(Status.OPEN);
-    if (status.right === Status.CLOSED) setDoorStatusRight(Status.CLOSED);
+    if (status.left === DoorState.OPEN) setDoorStatusLeft(DoorState.OPEN);
+    if (status.left === DoorState.CLOSED) setDoorStatusLeft(DoorState.CLOSED);
+    if (status.right === DoorState.OPEN) setDoorStatusRight(DoorState.OPEN);
+    if (status.right === DoorState.CLOSED) setDoorStatusRight(DoorState.CLOSED);
     setEnvironment(status.environment);
     setLastUpdateTime(new Date().getTime());
   };
 
   const handleFetchStatusError = (error) => {
     console.error(`fetch status error: ${error}`);
-    setDoorStatusLeft(Status.LOADING);
-    setDoorStatusRight(Status.LOADING);
+    setDoorStatusLeft(DoorState.LOADING);
+    setDoorStatusRight(DoorState.LOADING);
     setEnvironment(null);
   };
 

@@ -1,12 +1,8 @@
 import { useState, useCallback, useContext, useEffect } from "react";
-import {
-  PiArrowFatLineDownFill,
-  PiArrowFatLineUpFill,
-  PiArrowsClockwiseBold,
-} from "react-icons/pi";
 
 import { Environment } from "./components/Environment";
-import { Status } from "./enums/Status";
+import { DoorState } from "./enums/DoorState";
+import { Status } from "./components/Status";
 import { GarageStatusContext } from "./context/GarageStatusContext";
 import { ApiEndpointContext } from "./context/ApiEndpointcontext";
 import "./App.css";
@@ -28,7 +24,8 @@ export const App = () => {
 
   const tryToEnableToggleButton = useCallback(() => {
     if (
-      (doorStatusLeft === Status.OPEN || doorStatusRight === Status.OPEN) &&
+      (doorStatusLeft === DoorState.OPEN ||
+        doorStatusRight === DoorState.OPEN) &&
       !toggleTimeoutActive
     ) {
       setToggleButtonDisabled(false);
@@ -36,14 +33,17 @@ export const App = () => {
   }, [doorStatusLeft, doorStatusRight, toggleTimeoutActive]);
 
   useEffect(() => {
-    if (doorStatusLeft === Status.CLOSED && doorStatusRight === Status.CLOSED) {
+    if (
+      doorStatusLeft === DoorState.CLOSED &&
+      doorStatusRight === DoorState.CLOSED
+    ) {
       setToggleButtonDisabled(true);
     } else {
       tryToEnableToggleButton();
     }
     if (
-      doorStatusLeft === Status.LOADING &&
-      doorStatusRight === Status.LOADING
+      doorStatusLeft === DoorState.LOADING &&
+      doorStatusRight === DoorState.LOADING
     ) {
       setToggleButtonDisabled(true);
       setAuthButtonDisabled(true);
@@ -104,25 +104,9 @@ export const App = () => {
     };
   };
 
-  const renderStatusIcon = (status) => {
-    switch (status) {
-      case Status.LOADING:
-        return <PiArrowsClockwiseBold className="status-icon" />;
-      case Status.OPEN:
-        return <PiArrowFatLineUpFill className="status-icon" />;
-      case Status.CLOSED:
-        return <PiArrowFatLineDownFill className="status-icon" />;
-      default:
-        return <PiArrowsClockwiseBold className="status-icon" />;
-    }
-  };
-
   return (
     <div className="app-container">
-      <div className="status-container">
-        <div className="status-item">{renderStatusIcon(doorStatusLeft)}</div>
-        <div className="status-item">{renderStatusIcon(doorStatusRight)}</div>
-      </div>
+      <Status />
       <Environment />
       <div className="button-container">
         {authToken ? null : (
