@@ -117,6 +117,10 @@ export const App = () => {
     }
   };
 
+<<<<<<< HEAD
+=======
+  // TODO: why is environment in status container
+>>>>>>> f3175e2cacf2577b9eb7efe11c5047581e85c9c8
   return (
     <div className="app-container">
       <div className="status-container">
