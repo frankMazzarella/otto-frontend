@@ -5,7 +5,7 @@ import {
   PiArrowsClockwiseBold,
 } from "react-icons/pi";
 
-import { Environment } from "./Environment";
+import { Environment } from "./components/Environment";
 import { Status } from "./enums/Status";
 import { GarageStatusContext } from "./context/GarageStatusContext";
 import { ApiEndpointContext } from "./context/ApiEndpointcontext";
