@@ -1,6 +1,6 @@
-import { Environment } from "./components/Environment";
-import { Status } from "./components/Status";
-import { Buttons } from "./components/Buttons";
+import { Environment } from "./Environment";
+import { Status } from "./Status";
+import { Buttons } from "./Buttons";
 import "./App.css";
 
 const version = `v${process.env.REACT_APP_VERSION}`;
