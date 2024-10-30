@@ -75,8 +75,7 @@ export const Buttons = () => {
         tryToEnableToggleButton();
       }
     } catch (error) {
-      // TODO: add better logging for all catch blocks
-      console.error(error);
+      console.error(`toggle button error: ${error}`);
       tryToEnableToggleButton();
     }
   };
@@ -94,7 +93,7 @@ export const Buttons = () => {
           localStorage.setItem(AUTH_TOKEN_KEY, data.token);
         }
       } catch (error) {
-        console.error(error);
+        console.error(`authenticate button error: ${error}`);
       }
       setAuthButtonDisabled(false);
     }
