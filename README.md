@@ -1,4 +1,39 @@
-# Getting Started with Create React App
+# garage-sanity-frontend
+
+## Installation
+
+- Install firebase tools globally `$ npm install -g firebase-tools`
+- Install dependencies with `$ npm install`
+
+## Git Flow
+
+- This project uses `git-flow` for versioning
+- Install `git-flow` on your system
+  - For linux `$ apt-get install git-flow`
+- Documentation
+  - http://danielkummer.github.io/git-flow-cheatsheet/
+  - https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow
+
+## Running locally
+
+- Start the development server with `$ npm start`
+- Create a production build with `$ npm run build`
+  - Serve the static bundle using `serve`
+  - Install `serve` with `$ npm install -g serve`
+  - Serve the static assets with `$ serve -s build`
+
+## Deployment
+
+- Create a release branch using [git flow](#git-flow)
+  - Bump the version number in `package.json`
+  - Run `$ npm install` and any other last minute tasks
+- Finish the release branch and push all branches to the remote (including the new tag)
+- From the `master` branch build and deploy the production bundle
+  - `$ npm run deploy`
+  - The production bundle will be uploaded and deployed using firebase
+  - The assets will be available at https://sanity-website.web.app/
+
+## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
