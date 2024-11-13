@@ -1,10 +1,5 @@
 # garage-sanity-frontend
 
-## Installation
-
-- Install firebase tools globally `$ npm install -g firebase-tools`
-- Install dependencies with `$ npm install`
-
 ## Git Flow
 
 - This project uses `git-flow` for versioning
@@ -29,9 +24,9 @@
   - Run `$ npm install` and any other last minute tasks
 - Finish the release branch and push all branches to the remote (including the new tag)
 - From the `master` branch build and deploy the production bundle
-  - `$ npm run deploy`
-  - The production bundle will be uploaded and deployed using firebase
-  - The assets will be available at https://sanity-website.web.app/
+  - First creat the bundle with `$ npm run build`
+  - Then use PM2 to serve the static files
+  - `$ pm2 serve build 3000 --spa --name garage-sanity-frontend`
 
 ## Getting Started with Create React App
 
