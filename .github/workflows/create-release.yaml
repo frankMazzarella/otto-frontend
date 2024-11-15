@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 name: Create Release
 
@@ -16,23 +16,22 @@ jobs:
           node-version: 20
       - run: npm ci
       - run: npm run build
-      - name: release
+      - name: Create new release
         uses: actions/create-release@v1
         id: create_release
         with:
           draft: false
           prerelease: false
-          release_name: ${{ github.ref }}
           tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-      - name: upload linux artifact
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifact to release
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: build
           asset_name: ${{ github.ref }}.tar.gz
           asset_content_type: application/gzip
-
