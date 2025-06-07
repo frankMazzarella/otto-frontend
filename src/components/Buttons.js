@@ -85,7 +85,7 @@ export const Buttons = () => {
     if (password) {
       setAuthButtonDisabled(true);
       try {
-        const options = getFetchOptions({ password });
+        const options = getFetchOptions({ password: password.trim() });
         const response = await fetch(authenticateEndpoint, options);
         const data = await response.json();
         if (data.token) {
