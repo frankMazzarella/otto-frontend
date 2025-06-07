@@ -28,6 +28,18 @@
   - Then use PM2 to serve the static files
   - `$ pm2 serve build 3000 --spa --name garage-sanity-frontend`
 
+## Deployment to rpi
+
+- The Raspberry Pi does not have the resources to build the frontend locally
+- Upon the pushing of a new git tag, a GitHub action will dispatch to build the frontend
+  - SSH into the rpi
+  - `$ cd ~/garage-sanity-frontend`
+  - `$ wget` the release from GitHub to `garage-sanity-frontend`
+  - Extract with `$ tar -xvzf garage-sanity-frontend-v{{ BUILD_VERSION }}.tar.gz`
+  - Rename `build` to `{{ BUILD_VERSION }}`
+  - Stop the frontend from running on PM2 with `$ pm2 stop garage-sanity-frontend`
+  - Start the frontend with PM2 with `$ pm2 serve {{ BUILD_VERSION }} 3000 --spa --name garage-sanity-frontend`
+
 ## Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
