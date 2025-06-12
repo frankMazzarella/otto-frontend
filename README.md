@@ -22,16 +22,11 @@
 - Create a release branch using [git flow](#git-flow)
   - Bump the version number in `package.json`
   - Run `$ npm install` and any other last minute tasks
-- Finish the release branch and push all branches to the remote (including the new tag)
-- From the `master` branch build and deploy the production bundle
-  - First creat the bundle with `$ npm run build`
-  - Then use PM2 to serve the static files
-  - `$ pm2 serve build 3000 --spa --name garage-sanity-frontend`
-
-## Deployment to rpi
-
-- The Raspberry Pi does not have the resources to build the frontend locally
-- Upon the pushing of a new git tag, a GitHub action will dispatch to build the frontend
+  - Finish the release branch and push all branches to the remote (including the new tag)
+- Create the production bundle
+  - The Raspberry Pi does not have the resources to build the frontend locally
+  - Upon the pushing of a new git tag, a GitHub action will dispatch to build the frontend
+- Deploy the bundle to the Pi
   - SSH into the rpi
   - `$ cd ~/garage-sanity-frontend`
   - `$ wget` the release from GitHub to `garage-sanity-frontend`
@@ -39,6 +34,7 @@
   - Rename `build` to `{{ BUILD_VERSION }}`
   - Stop the frontend from running on PM2 with `$ pm2 stop garage-sanity-frontend`
   - Start the frontend with PM2 with `$ pm2 serve {{ BUILD_VERSION }} 3000 --spa --name garage-sanity-frontend`
+  - Save new PM2 configuration with `$ pm2 save`
 
 ## Getting Started with Create React App
 
