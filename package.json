@@ -1,6 +1,6 @@
 {
-  "name": "garage-sanity-frontend",
-  "version": "1.4.5",
+  "name": "otto-frontend",
+  "version": "2.0.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -17,7 +17,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "compress": "tar -czvf garage-sanity-frontend.tar.gz build"
+    "compress": "tar -czvf otto-frontend.tar.gz build"
   },
   "eslintConfig": {
     "extends": [
