@@ -3,7 +3,7 @@ import { createContext } from "react";
 export const ApiEndpointContext = createContext();
 
 export const ApiEndpointContextProvider = ({ children }) => {
-  const DOMAIN_PROD = "https://sanity.frankmazz.com";
+  const DOMAIN_PROD = "https://otto.frankmazz.com";
   const DOMAIN_LOCAL = "http://localhost:4000";
 
   let statusEndpoint;
