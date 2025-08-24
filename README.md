@@ -1,4 +1,4 @@
-# garage-sanity-frontend
+# otto-frontend
 
 ## Git Flow
 
@@ -28,12 +28,12 @@
   - Upon the pushing of a new git tag, a GitHub action will dispatch to build the frontend
 - Deploy the bundle to the Pi
   - SSH into the rpi
-  - `$ cd ~/garage-sanity-frontend`
-  - `$ wget` the release from GitHub to `garage-sanity-frontend`
-  - Extract with `$ tar -xvzf garage-sanity-frontend-v{{ BUILD_VERSION }}.tar.gz`
+  - `$ cd ~/otto-frontend`
+  - `$ wget` the release from GitHub to `otto-frontend`
+  - Extract with `$ tar -xvzf otto-frontend-v{{ BUILD_VERSION }}.tar.gz`
   - Rename `build` to `{{ BUILD_VERSION }}`
-  - Stop the frontend from running on PM2 with `$ pm2 stop garage-sanity-frontend`
-  - Start the frontend with PM2 with `$ pm2 serve {{ BUILD_VERSION }} 3000 --spa --name garage-sanity-frontend`
+  - Stop the frontend from running on PM2 with `$ pm2 stop otto-frontend`
+  - Start the frontend with PM2 with `$ pm2 serve {{ BUILD_VERSION }} 3000 --spa --name otto-frontend`
   - Save new PM2 configuration with `$ pm2 save`
 
 ## Getting Started with Create React App
