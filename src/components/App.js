@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 
 import { ApiEndpointContextProvider } from "../context/ApiEndpointcontext";
-import { Garage } from "./garage/Garage";
-import { Hvac } from "./hvac/Hvac";
+import { Garage } from "./garage";
+import { Hvac } from "./hvac";
 import "./App.css";
 
 const version = `v${process.env.REACT_APP_VERSION}`;
