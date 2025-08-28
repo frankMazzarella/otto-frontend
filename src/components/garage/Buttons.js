@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect, useContext } from "react";
 
-import { DoorState } from "../enums/DoorState";
-import { ApiEndpointContext } from "../context/ApiEndpointcontext";
-import { GarageStatusContext } from "../context/GarageStatusContext";
+import { DoorState } from "../../enums/DoorState";
+import { ApiEndpointContext } from "../../context/ApiEndpointcontext";
+import { GarageStatusContext } from "../../context/GarageStatusContext";
 import "./Buttons.css";
 
 const AUTH_TOKEN_KEY = "AUTH_TOKEN";

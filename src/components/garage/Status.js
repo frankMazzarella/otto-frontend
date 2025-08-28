@@ -5,8 +5,8 @@ import {
   PiArrowsClockwiseBold,
 } from "react-icons/pi";
 
-import { GarageStatusContext } from "../context/GarageStatusContext";
-import { DoorState } from "../enums/DoorState";
+import { GarageStatusContext } from "../../context/GarageStatusContext";
+import { DoorState } from "../../enums/DoorState";
 import "./Status.css";
 
 export const Status = () => {

@@ -1,8 +1,9 @@
+import { BrowserRouter, Routes, Route } from "react-router";
+
 import { GarageStatusContextProvider } from "../context/GarageStatusContext";
 import { ApiEndpointContextProvider } from "../context/ApiEndpointcontext";
-import { Environment } from "./Environment";
-import { Status } from "./Status";
-import { Buttons } from "./Buttons";
+import { Garage } from "./garage/Garage";
+import { Hvac } from "./hvac/Hvac";
 import "./App.css";
 
 const version = `v${process.env.REACT_APP_VERSION}`;
@@ -12,9 +13,12 @@ export const App = () => {
     <ApiEndpointContextProvider>
       <GarageStatusContextProvider>
         <div className="app-container">
-          <Status />
-          <Environment />
-          <Buttons />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Garage />} />
+              <Route path="/hvac" element={<Hvac />} />
+            </Routes>
+          </BrowserRouter>
           <div className="version">{version}</div>
         </div>
       </GarageStatusContextProvider>

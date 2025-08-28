@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { IoWater, IoThermometer } from "react-icons/io5";
 
-import { GarageStatusContext } from "../context/GarageStatusContext";
+import { GarageStatusContext } from "../../context/GarageStatusContext";
 import "./Environment.css";
 
 export const Environment = () => {
