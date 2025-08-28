@@ -1,0 +1,19 @@
+.navigation-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #5e5e5e;
+  height: 50px;
+  width: 100%;
+}
+
+.link {
+  font-size: 28px;
+  color: #5e5e5e;
+  margin: 10%;
+}
+
+.link.active {
+  color: #ccc;
+}

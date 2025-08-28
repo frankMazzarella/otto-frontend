@@ -1,0 +1,7 @@
+.garage-container {
+  width: 80%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

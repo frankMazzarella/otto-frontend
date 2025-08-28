@@ -1,14 +1,14 @@
-import { GarageStatusContextProvider } from "../../context/GarageStatusContext";
 import { Environment } from "./Environment";
 import { Status } from "./Status";
 import { Buttons } from "./Buttons";
+import "./index.css";
 
 export const Garage = () => {
   return (
-    <GarageStatusContextProvider>
+    <div className="garage-container">
       <Status />
       <Environment />
       <Buttons />
-    </GarageStatusContextProvider>
+    </div>
   );
 };
