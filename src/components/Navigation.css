@@ -3,7 +3,6 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border-bottom: 1px solid #5e5e5e;
   height: 50px;
   width: 100%;
 }
@@ -11,9 +10,16 @@
 .link {
   font-size: 28px;
   color: #5e5e5e;
-  margin: 10%;
+  margin: 10px;
+  text-decoration: none;
+  border: 1px solid #5e5e5e;
+  border-radius: 5px;
+  width: 45%;
+  max-width: 250px;
+  text-align: center;
 }
 
 .link.active {
   color: #ccc;
+  border: 1px solid #ccc;
 }
