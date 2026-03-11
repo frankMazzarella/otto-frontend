@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
-import { ApiEndpointContextProvider } from "../context/ApiEndpointcontext";
+import { ApiEndpointContextProvider } from "../context/ApiEndpointContext";
 import { GarageStatusContextProvider } from "../context/GarageStatusContext";
 import { Navigation } from "./Navigation";
 import { Garage } from "./garage";

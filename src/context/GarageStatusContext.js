@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, useContext } from "react";
 
 import { DoorState } from "../enums/DoorState";
-import { ApiEndpointContext } from "./ApiEndpointcontext";
+import { ApiEndpointContext } from "./ApiEndpointContext";
 
 export const GarageStatusContext = createContext();
 

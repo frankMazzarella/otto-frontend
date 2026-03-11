@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useContext } from "react";
 
 import { DoorState } from "../../enums/DoorState";
-import { ApiEndpointContext } from "../../context/ApiEndpointcontext";
+import { ApiEndpointContext } from "../../context/ApiEndpointContext";
 import { GarageStatusContext } from "../../context/GarageStatusContext";
 import "./Buttons.css";
 
